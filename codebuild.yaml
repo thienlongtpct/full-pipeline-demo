@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create CodeBuild project to build Docker image for FastAPI app
+
+Parameters:
+  RepositoryUrl:
+    Type: String
+    Description: Git repository containing FastAPI code
+  ImageTag:
+    Type: String
+    Default: latest
+    Description: Docker image tag
+  EcrRepositoryName:
+    Type: String
+    Default: fastapi-app
+    Description: ECR repository name to push image into
+
+Resources:
+  ### CodeBuild Project ###
+  FastApiBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: FastApiDockerBuild
+      ServiceRole: CodeBuildServiceRole
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        PrivilegedMode: true   # Required for Docker builds
+        EnvironmentVariables:
+          - Name: ECR_REPO
+            Value: fastapi-app
+          - Name: IMAGE_TAG
+            Value: !Ref ImageTag
+      Source:
+        Type: GITHUB
+        Location: !Ref RepositoryUrl
+      TimeoutInMinutes: 30

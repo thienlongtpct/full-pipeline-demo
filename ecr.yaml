@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create a new ECR repository for FastAPI app
+
+Parameters:
+  EcrRepositoryName:
+    Type: String
+    Default: fastapi-app
+    Description: The name of the ECR repository to create
+
+Resources:
+  FastApiEcrRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref EcrRepositoryName
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      EncryptionConfiguration:
+        EncryptionType: AES256
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images older than 14 days",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 14
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+
+Outputs:
+  EcrRepositoryName:
+    Description: Name of the ECR repository
+    Value: !Ref FastApiEcrRepo
+  EcrRepositoryUri:
+    Description: URI of the ECR repository
+    Value: !GetAtt FastApiEcrRepo.RepositoryUri

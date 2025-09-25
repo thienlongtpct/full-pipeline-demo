@@ -33,6 +33,11 @@ Resources:
             Value: fastapi-app
           - Name: IMAGE_TAG
             Value: !Ref ImageTag
+          - Name: AWS_ACCOUNT_ID
+            Value: 761835208222
+          - Name: AWS_DEFAULT_REGION
+            Value: ap-southeast-1
+            
       Source:
         Type: GITHUB
         Location: !Ref RepositoryUrl

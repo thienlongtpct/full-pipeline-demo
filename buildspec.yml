@@ -3,20 +3,18 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-      - echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID"
       - aws sts get-caller-identity
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 761835208222.dkr.ecr.ap-southeast-1.amazonaws.com
   build:
     commands:
       - echo Build started on `date`
       - echo Building Docker image for FastAPI...
       - docker build -t $ECR_REPO:$IMAGE_TAG .
-      - docker tag $ECR_REPO:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+      - docker tag $ECR_REPO:$IMAGE_TAG 761835208222.dkr.ecr.ap-southeast-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG
   post_build:
     commands:
       - echo Pushing Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+      - docker push 761835208222.dkr.ecr.ap-southeast-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG
       - echo Build completed on `date`
